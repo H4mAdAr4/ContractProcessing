@@ -4,11 +4,6 @@ using System.Globalization;
 
 namespace ContractProcessing.Entities.Services {
     class BillGeneratorService {
-        delegate string LineReplacer(string s1, string s2);
-        delegate string Substring(int i);
-        delegate double Interest(double d, int i);
-        delegate double Fee(double d);
-        delegate string CIValue(string s, IFormatProvider p);
         public static void GenerateBill(Contract contract, int payments) {
             try {
                 string sourcePath = Path.GetFullPath("BillModel.txt");
@@ -23,21 +18,15 @@ namespace ContractProcessing.Entities.Services {
 
                     using (var fileStream = new StreamWriter(targetPath)) {
                         string line = "";
-                        LineReplacer replace = line.Replace;
-                        Substring substring1 = aux.Substring;
-                        Substring substring2 = aux2.Substring;
-                        Interest interest = pay.Interest;
-                        Fee fee = pay.PayFee;
-                        CIValue cValue = contract.Installments[0].Value.ToString;
 
                         while ((line = sourcefile.ReadLine()) != null) {
-                            line = replace("x%", substring1(aux.Length - 2) + "%");
-                            line = replace("w%", substring2(aux2.Length - 2) + "%");
-                            line = replace(" X ", " " + interest(contract.Value, payments).ToString("F2", CultureInfo.InvariantCulture) + " ");
-                            line = replace(" W ", " " + fee(interest(contract.Value, payments)).ToString("F2", CultureInfo.InvariantCulture) + " ");
-                            line = replace(" C ", " " + value + " ");
-                            line = replace(" D ", " " + cValue("F2", CultureInfo.InvariantCulture) + " ");
-                            line = replace(" G ", " " + Rng() + " ");
+                            line = line.Replace("x%", aux.Substring(aux.Length - 2) + "%");
+                            line = line.Replace("w%", aux2.Substring(aux2.Length - 2) + "%");
+                            line = line.Replace(" X ", " " + pay.Interest(contract.Value, payments).ToString("F2", CultureInfo.InvariantCulture) + " ");
+                            line = line.Replace(" W ", " " + pay.PayFee(pay.Interest(contract.Value, payments)).ToString("F2", CultureInfo.InvariantCulture) + " ");
+                            line = line.Replace(" C ", " " + value + " ");
+                            line = line.Replace(" D ", " " + contract.Installments[0].Value.ToString("F2", CultureInfo.InvariantCulture) + " ");
+                            line = line.Replace(" G ", " " + Rng() + " ");
                             fileStream.WriteLine(line);
                         }
                         fileStream.Close();
