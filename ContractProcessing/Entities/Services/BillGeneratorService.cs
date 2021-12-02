@@ -6,7 +6,7 @@ namespace ContractProcessing.Entities.Services {
     class BillGeneratorService {
         public static void GenerateBill(Contract contract, int payments) {
             try {
-                string sourcePath = Path.GetFullPath("BillModel.txt");
+                string sourcePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\BillModel.txt";
                 string targetPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Bill.txt";
                 PaymentService pay = new PaymentService();
                 var aux = pay.InterestRate.ToString("F2", CultureInfo.InvariantCulture);
@@ -24,7 +24,7 @@ namespace ContractProcessing.Entities.Services {
                             line = line.Replace("w%", aux2.Substring(aux2.Length - 2) + "%");
                             line = line.Replace(" X ", " " + pay.Interest(contract.Value, payments).ToString("F2", CultureInfo.InvariantCulture) + " ");
                             line = line.Replace(" W ", " " + pay.PayFee(pay.Interest(contract.Value, payments)).ToString("F2", CultureInfo.InvariantCulture) + " ");
-                            line = line.Replace(" C ", " " + value + " ");
+                            line = line.Replace(" C ", " " + value.ToString("F2", CultureInfo.InvariantCulture) + " ");
                             line = line.Replace(" D ", " " + contract.Installments[0].Value.ToString("F2", CultureInfo.InvariantCulture) + " ");
                             line = line.Replace(" G ", " " + Rng() + " ");
                             fileStream.WriteLine(line);
